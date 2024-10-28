@@ -27,6 +27,8 @@ CREATE TABLE monthly_expenses (
     admin_id INT,
     FOREIGN KEY (admin_id) REFERENCES users(id)
 );
+
+
 -- family expenses table
 CREATE TABLE family_expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
