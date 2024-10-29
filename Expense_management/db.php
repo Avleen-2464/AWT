@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 1);  // Show errors
-ini_set('display_startup_errors', 1);  // Show startup errors
-error_reporting(E_ALL);  // Report all types of errors
+// ini_set('display_errors', 1); 
+// ini_set('display_startup_errors', 1); 
+// error_reporting(E_ALL);  // Report all types of errors
 
 $servername = "localhost";  
 $username = "root";  

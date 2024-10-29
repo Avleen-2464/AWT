@@ -36,5 +36,5 @@ CREATE TABLE family_expenses (
     user_id INT,
     contribution DECIMAL(10, 2),
     FOREIGN KEY (expense_id) REFERENCES expenses(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)  -- Assuming there's a users table
+    FOREIGN KEY (user_id) REFERENCES users(id)  
 );
