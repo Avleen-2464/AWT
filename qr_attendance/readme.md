@@ -13,3 +13,4 @@ CREATE TABLE attendance (
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (urn) REFERENCES students(urn)
 );
+
