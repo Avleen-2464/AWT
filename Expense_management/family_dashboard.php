@@ -7,22 +7,21 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Fetch all expenses for this month
+// this month
 $current_month = date('Y-m');
 $query = "SELECT * FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$current_month'";
 $expenses = $conn->query($query);
 
-// Handle form submission to add amount spent
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $amount_spent = $_POST['amount_spent'];
     $expense_id = $_POST['expense_id'];
 
-    // Update the expenses table with the amount spent
+    
     $update_query = "UPDATE expenses SET amount = amount + '$amount_spent' WHERE id = '$expense_id'";
 
     if ($conn->query($update_query)) {
         echo "<div class='alert alert-success'>Amount added successfully!</div>";
-        // Refresh the expenses after adding
+        
         $expenses = $conn->query($query);
     } else {
         echo "<div class='alert alert-danger'>Error adding amount: " . $conn->error . "</div>";
@@ -47,12 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="logout.php" class="btn btn-danger">Logout</a>
         </div>
 
-        <!-- Compare Expenses Button -->
+        
         <div class="mb-4">
             <a href="compare_expenses.php" class="btn btn-info">Compare Expenses</a>
         </div>
 
-        <!-- List of Expenses -->
         <div class="card p-4">
             <h3 class="mb-4">Expenses for <?php echo date('F Y'); ?></h3>
             <table class="table table-bordered table-hover">

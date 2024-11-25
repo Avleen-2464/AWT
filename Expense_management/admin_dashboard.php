@@ -6,37 +6,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
     exit;
 }
 
-// Fetch all expenses for this month
+
 $current_month = date('Y-m');
 $query = "SELECT * FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$current_month'";
 $expenses = $conn->query($query);
 
-// Handle form submission to add amount spent
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount_spent'])) {
     $amount_spent = $_POST['amount_spent'];
     $expense_id = $_POST['expense_id'];
 
-    // Update the expenses table with the amount spent
+    
     $update_query = "UPDATE expenses SET amount = amount + '$amount_spent' WHERE id = '$expense_id'";
 
     if ($conn->query($update_query)) {
         echo "<div class='alert alert-success'>Amount added successfully!</div>";
-        $expenses = $conn->query($query); // Refresh the expenses after adding
+        $expenses = $conn->query($query); 
     } else {
         echo "<div class='alert alert-danger'>Error adding amount: " . $conn->error . "</div>";
     }
 }
 
-// Handle form submission to add a new item
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
     $new_item_name = $_POST['new_item_name'];
 
-    // Insert the new item with an initial amount of 0
+    
     $insert_query = "INSERT INTO expenses (item_name, amount, date_added) VALUES ('$new_item_name', 0, CURDATE())";
 
     if ($conn->query($insert_query)) {
         echo "<div class='alert alert-success'>New item added successfully!</div>";
-        $expenses = $conn->query($query); // Refresh the expenses after adding
+        $expenses = $conn->query($query); 
     } else {
         echo "<div class='alert alert-danger'>Error adding item: " . $conn->error . "</div>";
     }
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https:
 </head>
 <body>
     <div class="container mt-5">

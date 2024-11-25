@@ -7,31 +7,31 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Fetch all unique months from the expenses table
+
 $query = "SELECT DISTINCT DATE_FORMAT(date_added, '%Y-%m') AS month FROM expenses ORDER BY month DESC";
 $months_result = $conn->query($query);
 
-// Initialize variables for selected months
+
 $month1 = '';
 $month2 = '';
 
-// Initialize totals
+
 $total_amount_month1 = 0;
 $total_amount_month2 = 0;
 
-// Handle form submission to get expense data for the selected months
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $month1 = $_POST['month1'];
     $month2 = $_POST['month2'];
 
-    // Fetch expenses for both selected months
+    
     $query1 = "SELECT item_name, SUM(amount) AS total_amount FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$month1' GROUP BY item_name";
     $query2 = "SELECT item_name, SUM(amount) AS total_amount FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$month2' GROUP BY item_name";
 
     $expenses_month1 = $conn->query($query1);
     $expenses_month2 = $conn->query($query2);
 
-    // Calculate total amounts
+    
     while ($expense = $expenses_month1->fetch_assoc()) {
         $total_amount_month1 += $expense['total_amount'];
     }
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $total_amount_month2 += $expense['total_amount'];
     }
 
-    // Reset the result pointers to allow fetching expenses again for display
+    
     $expenses_month1->data_seek(0);
     $expenses_month2->data_seek(0);
 }
@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
     <title>Compare Expenses</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https:
+    <script src="https:
 </head>
 <body>
     <div class="container mt-5">
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <select class="form-select" name="month1" required>
                         <option value="">Select Month 1</option>
                         <?php 
-                        $months_result->data_seek(0); // Reset result pointer for first dropdown
+                        $months_result->data_seek(0); 
                         while ($row = $months_result->fetch_assoc()) { ?>
                             <option value="<?php echo $row['month']; ?>" <?php echo ($month1 == $row['month']) ? 'selected' : ''; ?>>
                                 <?php echo date('F Y', strtotime($row['month'])); ?>
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <select class="form-select" name="month2" required>
                         <option value="">Select Month 2</option>
                         <?php 
-                        $months_result->data_seek(0); // Reset result pointer for second dropdown
+                        $months_result->data_seek(0); 
                         while ($row = $months_result->fetch_assoc()) { ?>
                             <option value="<?php echo $row['month']; ?>" <?php echo ($month2 == $row['month']) ? 'selected' : ''; ?>>
                                 <?php echo date('F Y', strtotime($row['month'])); ?>

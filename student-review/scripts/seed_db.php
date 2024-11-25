@@ -42,15 +42,23 @@ try {
   }
 
   // Define the students to seed with various levels of remarks
+  // $students = [
+  //   ['name' => 'Devesh', 'urn' => '2203818', 'remark1' => NULL, 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // No remarks
+  //   ['name' => 'Mayank', 'urn' => '2203855', 'remark1' => 'First warning issued', 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark1 only
+  //   ['name' => 'Avleen', 'urn' => '2203810', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark2 only
+  //   ['name' => 'Ishpreet', 'urn' => '2203839', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => NULL, 'status' => 'pending'], // Remark3 only
+  //   ['name' => 'Navkiran', 'urn' => '2203863', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'No action taken', 'status' => 'rejected'], // All remarks, status rejected (relieved)
+  //   ['name' => 'Harjot', 'urn' => '2203865', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'Suspension confirmed', 'status' => 'accepted'] // All remarks, status accepted (suspended)
+  // ];
+
   $students = [
-    ['name' => 'Devesh', 'urn' => '2203818', 'remark1' => NULL, 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // No remarks
-    ['name' => 'Mayank', 'urn' => '2203855', 'remark1' => 'First warning issued', 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark1 only
+    ['name' => 'Allen', 'urn' => '2204081', 'remark1' => NULL, 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // No remarks
+    ['name' => 'Joe', 'urn' => '2204812', 'remark1' => 'First warning issued', 'remark2' => NULL, 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark1 only
     ['name' => 'Avleen', 'urn' => '2203810', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark2 only
     ['name' => 'Ishpreet', 'urn' => '2203839', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => NULL, 'status' => 'pending'], // Remark3 only
-    ['name' => 'Navkiran', 'urn' => '2203863', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'No action taken', 'status' => 'rejected'], // All remarks, status rejected (relieved)
-    ['name' => 'Harjot', 'urn' => '2203865', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'Suspension confirmed', 'status' => 'accepted'] // All remarks, status accepted (suspended)
+    ['name' => 'Neha', 'urn' => '2203423', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'No action taken', 'status' => 'rejected'], // All remarks, status rejected (relieved)
+    ['name' => 'John', 'urn' => '2204825', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'Suspension confirmed', 'status' => 'accepted'] // All remarks, status accepted (suspended)
   ];
-
   // Seed Students
   $studentStmt = $pdo->prepare("INSERT INTO Students (name, urn, remark1, remark2, remark3, remark4, status) VALUES (:name, :urn, :remark1, :remark2, :remark3, :remark4, :status)");
 

@@ -1,5 +1,5 @@
 <?php
-include 'db.php'; // Include database connection
+include 'db.php'; 
 ?>
 
 <!DOCTYPE html>
@@ -8,8 +8,8 @@ include 'db.php'; // Include database connection
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Attendance Scanner</title>
-    <script src="jsQR.js"></script> <!-- Include jsQR library locally -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap CSS -->
+    <script src="jsQR.js"></script>
+    <link href="https:
     <style>
         body, html {
             height: 100%;
@@ -88,13 +88,13 @@ include 'db.php'; // Include database connection
         
         <div id="status" class="mt-3">Click "Start Scanning" to begin.</div>
         <div id="error" class="mt-3"></div>
-        <div id="result" class="highlight d-none"></div> <!-- Success message will appear here -->
+        <div id="result" class="highlight d-none"></div> 
     </div>
 
     <script>
         const video = document.getElementById('preview');
         const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d', { willReadFrequently: true }); // Use willReadFrequently attribute
+        const context = canvas.getContext('2d', { willReadFrequently: true }); 
         const errorDisplay = document.getElementById('error');
         const statusDisplay = document.getElementById('status');
         const resultDisplay = document.getElementById('result');
@@ -104,11 +104,11 @@ include 'db.php'; // Include database connection
             navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
                 .then(function (stream) {
                     video.srcObject = stream;
-                    video.setAttribute("playsinline", true); // Required to tell iOS Safari we don't want fullscreen
+                    video.setAttribute("playsinline", true); 
                     video.play();
-                    video.style.display = 'block'; // Show the video element
-                    startButton.hidden = true; // Hide the button
-                    statusDisplay.innerText = 'Scanning started...'; // Indicate that scanning has started
+                    video.style.display = 'block'; 
+                    startButton.hidden = true; 
+                    statusDisplay.innerText = 'Scanning started...'; 
                     requestAnimationFrame(scanQRCode);
                 })
                 .catch(function (e) {
@@ -119,7 +119,7 @@ include 'db.php'; // Include database connection
 
         function scanQRCode() {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                // Make canvas match video dimensions
+                
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -128,14 +128,14 @@ include 'db.php'; // Include database connection
                 const code = jsQR(imageData.data, canvas.width, canvas.height);
 
                 if (code) {
-                    errorDisplay.innerText = ''; // Clear any previous error message
-                    statusDisplay.innerText = ''; // Clear status message
-                    resultDisplay.classList.remove('d-none'); // Show result message
+                    errorDisplay.innerText = ''; 
+                    statusDisplay.innerText = ''; 
+                    resultDisplay.classList.remove('d-none'); 
                     resultDisplay.innerHTML = "Scanned URN: " + code.data;
-                    // Redirect to mark attendance page with scanned URN
+                    
                     setTimeout(() => {
                         window.location.href = 'mark_attendance.php?urn=' + encodeURIComponent(code.data);
-                    }, 2000); // Short delay to display message before redirecting
+                    }, 2000); 
                 } else {
                     errorDisplay.innerText = 'No QR code detected. Please try again.';
                 }
