@@ -1,86 +1,86 @@
-<?php
-session_start();
-include 'db.php';
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
-    header('Location: login.php');
-    exit;
-}
-
-
-$current_month = date('Y-m');
-$query = "SELECT * FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$current_month'";
-$expenses = $conn->query($query);
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount_spent'])) {
-    $amount_spent = $_POST['amount_spent'];
-    $expense_id = $_POST['expense_id'];
-
-    
-    $update_query = "UPDATE expenses SET amount = amount + '$amount_spent' WHERE id = '$expense_id'";
-
-    if ($conn->query($update_query)) {
-        echo "<div class='alert alert-success'>Amount added successfully!</div>";
-        $expenses = $conn->query($query); 
-    } else {
-        echo "<div class='alert alert-danger'>Error adding amount: " . $conn->error . "</div>";
-    }
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
-    $new_item_name = $_POST['new_item_name'];
-
-    
-    $insert_query = "INSERT INTO expenses (item_name, amount, date_added) VALUES ('$new_item_name', 0, CURDATE())";
-
-    if ($conn->query($insert_query)) {
-        echo "<div class='alert alert-success'>New item added successfully!</div>";
-        $expenses = $conn->query($query); 
-    } else {
-        echo "<div class='alert alert-danger'>Error adding item: " . $conn->error . "</div>";
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link href="https:
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        h2, h3 {
+            font-weight: 600;
+            color: #343a40;
+        }
+        .btn {
+            border-radius: 8px;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+        .table-primary {
+            background-color: #007bff !important;
+            color: white;
+        }
+        .logout-btn {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            border: none;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Admin Dashboard</h2>
+        <h2 class="text-center mb-5">Admin Dashboard</h2>
 
-        <div class="d-flex justify-content-between mb-4">
-            <div></div>
-            <a href="logout.php" class="btn btn-danger">Logout</a>
+        <!-- Logout Button -->
+        <div class="logout-btn mb-3">
+            <a href="logout.php" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Logout</a>
         </div>
 
         <!-- Compare Expenses Button -->
-        <div class="mb-4">
-            <a href="compare_expenses.php" class="btn btn-info">Compare Expenses</a>
+        <div class="mb-4 text-center">
+            <a href="compare_expenses.php" class="btn btn-info btn-lg"><i class="bi bi-bar-chart"></i> Compare Expenses</a>
         </div>
 
         <!-- Add New Item Form -->
-        <div class="card p-4 mb-4">
-            <h3>Add New Item</h3>
+        <div class="card p-4 mb-5">
+            <h3 class="mb-3">Add New Item</h3>
             <form method="POST" action="admin_dashboard.php">
-                <div class="mb-3">
-                    <label for="new_item_name" class="form-label">Item Name</label>
-                    <input type="text" name="new_item_name" id="new_item_name" class="form-control" required>
+                <div class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" name="new_item_name" id="new_item_name" class="form-control" placeholder="Enter Item Name" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-circle"></i> Add</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Item</button>
             </form>
         </div>
 
         <!-- List of Expenses -->
         <div class="card p-4">
             <h3 class="mb-4">Expenses for <?php echo date('F Y'); ?></h3>
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover text-center">
                 <thead>
                     <tr class="table-primary">
                         <th>Item</th>
@@ -92,12 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
                     <?php while ($row = $expenses->fetch_assoc()) { ?>
                     <tr>
                         <td><?php echo $row['item_name']; ?></td>
-                        <td><?php echo $row['amount']; ?></td>
+                        <td>₹<?php echo $row['amount']; ?></td>
                         <td>
-                            <form method="POST" action="admin_dashboard.php">
-                                <input type="number" name="amount_spent" class="form-control" required>
+                            <form method="POST" action="admin_dashboard.php" class="d-flex align-items-center">
+                                <input type="number" name="amount_spent" class="form-control" style="max-width: 100px;" required>
                                 <input type="hidden" name="expense_id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="btn btn-success mt-2">Add</button>
+                                <button type="submit" class="btn btn-success ms-2"><i class="bi bi-cash-stack"></i> Add</button>
                             </form>
                         </td>
                     </tr>
@@ -106,5 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
             </table>
         </div>
     </div>
+
+    <!-- Bootstrap JS and Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
 </body>
 </html>
