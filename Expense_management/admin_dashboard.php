@@ -1,149 +1,114 @@
+<?php
+session_start();
+include 'db.php';
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'admin') {
+    header('Location: login.php');
+    exit;
+}
+
+$current_month = date('Y-m');
+$query = "SELECT * FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$current_month'";
+$expenses = $conn->query($query);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['amount_spent'])) {
+    $amount_spent = $_POST['amount_spent'];
+    $expense_id = $_POST['expense_id'];
+
+    $update_query = "UPDATE expenses SET amount = amount + '$amount_spent' WHERE id = '$expense_id'";
+
+    if ($conn->query($update_query)) {
+        echo "<div class='alert alert-success'>Amount added successfully!</div>";
+        $expenses = $conn->query($query); 
+    } else {
+        echo "<div class='alert alert-danger'>Error adding amount: " . $conn->error . "</div>";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['new_item_name'])) {
+    $new_item_name = $_POST['new_item_name'];
+
+    $insert_query = "INSERT INTO expenses (item_name, amount, date_added) VALUES ('$new_item_name', 0, CURDATE())";
+
+    if ($conn->query($insert_query)) {
+        echo "<div class='alert alert-success'>New item added successfully!</div>";
+        $expenses = $conn->query($query); 
+    } else {
+        echo "<div class='alert alert-danger'>Error adding item: " . $conn->error . "</div>";
+    }
+}
+?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Compare Expenses</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
-        <!-- Header -->
-        <div class="text-center mb-4">
-            <h2 class="text-primary">Compare Expenses</h2>
+        <h2 class="text-center mb-4">Admin Dashboard</h2>
+
+        <div class="d-flex justify-content-between mb-4">
+            <div></div>
+            <a href="logout.php" class="btn btn-danger">Logout</a>
         </div>
 
-        <!-- Compare Form -->
-        <form method="POST" action="compare_expenses.php" class="mb-4">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="month1" class="form-label">Select Month 1</label>
-                    <select id="month1" class="form-select" name="month1" required>
-                        <option value="">Select Month 1</option>
-                        <?php 
-                        $months_result->data_seek(0); 
-                        while ($row = $months_result->fetch_assoc()) { ?>
-                            <option value="<?php echo $row['month']; ?>" <?php echo ($month1 == $row['month']) ? 'selected' : ''; ?>>
-                                <?php echo date('F Y', strtotime($row['month'])); ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="month2" class="form-label">Select Month 2</label>
-                    <select id="month2" class="form-select" name="month2" required>
-                        <option value="">Select Month 2</option>
-                        <?php 
-                        $months_result->data_seek(0); 
-                        while ($row = $months_result->fetch_assoc()) { ?>
-                            <option value="<?php echo $row['month']; ?>" <?php echo ($month2 == $row['month']) ? 'selected' : ''; ?>>
-                                <?php echo date('F Y', strtotime($row['month'])); ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-                </div>
-            </div>
-            <div class="text-center mt-3">
-                <button type="submit" class="btn btn-primary">Compare</button>
-            </div>
-        </form>
+        <!-- Compare Expenses Button -->
+        <div class="mb-4">
+            <a href="compare_expenses.php" class="btn btn-info">Compare Expenses</a>
+        </div>
 
-        <!-- Results Section -->
-        <?php if ($_SERVER['REQUEST_METHOD'] == 'POST') { ?>
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h4>Expenses for <?php echo date('F Y', strtotime($month1)); ?></h4>
-                    <h5>Total Amount: <span class="text-success"><?php echo $total_amount_month1; ?></span></h5>
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Item</th>
-                                <th>Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ($expenses_month1->num_rows > 0) {
-                                while ($expense = $expenses_month1->fetch_assoc()) { ?>
-                                    <tr>
-                                        <td><?php echo $expense['item_name']; ?></td>
-                                        <td><?php echo $expense['total_amount']; ?></td>
-                                    </tr>
-                                <?php }
-                            } else { ?>
-                                <tr>
-                                    <td colspan="2" class="text-center">No expenses found for this month.</td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+        <!-- Add New Item Form -->
+        <div class="card p-4 mb-4">
+            <h3>Add New Item</h3>
+            <form method="POST" action="admin_dashboard.php">
+                <div class="mb-3">
+                    <label for="new_item_name" class="form-label">Item Name</label>
+                    <input type="text" name="new_item_name" id="new_item_name" class="form-control" required>
                 </div>
+                <button type="submit" class="btn btn-primary">Add Item</button>
+            </form>
+        </div>
 
-                <div class="col-md-6">
-                    <h4>Expenses for <?php echo date('F Y', strtotime($month2)); ?></h4>
-                    <h5>Total Amount: <span class="text-success"><?php echo $total_amount_month2; ?></span></h5>
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Item</th>
-                                <th>Total Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ($expenses_month2->num_rows > 0) {
-                                while ($expense = $expenses_month2->fetch_assoc()) { ?>
-                                    <tr>
-                                        <td><?php echo $expense['item_name']; ?></td>
-                                        <td><?php echo $expense['total_amount']; ?></td>
-                                    </tr>
-                                <?php }
-                            } else { ?>
-                                <tr>
-                                    <td colspan="2" class="text-center">No expenses found for this month.</td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Chart Section -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <h4 class="card-title">Expenses Comparison Chart</h4>
-                    <canvas id="expensesChart" width="400" height="200"></canvas>
-                </div>
-            </div>
-            <script>
-                const ctx = document.getElementById('expensesChart').getContext('2d');
-                const chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['<?php echo date('F Y', strtotime($month1)); ?>', '<?php echo date('F Y', strtotime($month2)); ?>'],
-                        datasets: [{
-                            label: 'Total Expenses',
-                            data: [<?php echo $total_amount_month1; ?>, <?php echo $total_amount_month2; ?>],
-                            backgroundColor: [
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            </script>
-        <?php } ?>
+        <!-- List of Expenses -->
+        <div class="card p-4">
+            <h3 class="mb-4">Expenses for <?php echo date('F Y'); ?></h3>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Item</th>
+                        <th>Total Amount</th>
+                        <th>Add Amount Spent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $expenses->fetch_assoc()) { ?>
+                    <tr>
+                        <td><?php echo $row['item_name']; ?></td>
+                        <td><?php echo $row['amount']; ?></td>
+                        <td>
+                            <form method="POST" action="admin_dashboard.php">
+                                <div class="input-group">
+                                    <input type="number" name="amount_spent" class="form-control" required>
+                                    <input type="hidden" name="expense_id" value="<?php echo $row['id']; ?>">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-success">Add</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
