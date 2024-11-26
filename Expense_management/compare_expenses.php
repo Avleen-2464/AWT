@@ -7,31 +7,25 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-
 $query = "SELECT DISTINCT DATE_FORMAT(date_added, '%Y-%m') AS month FROM expenses ORDER BY month DESC";
 $months_result = $conn->query($query);
-
 
 $month1 = '';
 $month2 = '';
 
-
 $total_amount_month1 = 0;
 $total_amount_month2 = 0;
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $month1 = $_POST['month1'];
     $month2 = $_POST['month2'];
 
-    
     $query1 = "SELECT item_name, SUM(amount) AS total_amount FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$month1' GROUP BY item_name";
     $query2 = "SELECT item_name, SUM(amount) AS total_amount FROM expenses WHERE DATE_FORMAT(date_added, '%Y-%m') = '$month2' GROUP BY item_name";
 
     $expenses_month1 = $conn->query($query1);
     $expenses_month2 = $conn->query($query2);
 
-    
     while ($expense = $expenses_month1->fetch_assoc()) {
         $total_amount_month1 += $expense['total_amount'];
     }
@@ -40,18 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $total_amount_month2 += $expense['total_amount'];
     }
 
-    
     $expenses_month1->data_seek(0);
     $expenses_month2->data_seek(0);
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compare Expenses</title>
-    <link href="https:
-    <script src="https:
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -88,58 +83,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
 
         <?php if ($_SERVER['REQUEST_METHOD'] == 'POST') { ?>
-            <h4>Expenses for <?php echo date('F Y', strtotime($month1)); ?></h4>
-            <h5>Total Amount: <?php echo $total_amount_month1; ?></h5>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Total Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($expenses_month1->num_rows > 0) {
-                        while ($expense = $expenses_month1->fetch_assoc()) { ?>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Expenses for <?php echo date('F Y', strtotime($month1)); ?></h4>
+                    <h5>Total Amount: ₹<?php echo number_format($total_amount_month1, 2); ?></h5>
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td><?php echo $expense['item_name']; ?></td>
-                                <td><?php echo $expense['total_amount']; ?></td>
+                                <th>Item</th>
+                                <th>Total Amount</th>
                             </tr>
-                        <?php }
-                    } else { ?>
-                        <tr>
-                            <td colspan="2">No expenses found for this month.</td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            <?php if ($expenses_month1->num_rows > 0) {
+                                while ($expense = $expenses_month1->fetch_assoc()) { ?>
+                                    <tr>
+                                        <td><?php echo $expense['item_name']; ?></td>
+                                        <td>₹<?php echo number_format($expense['total_amount'], 2); ?></td>
+                                    </tr>
+                                <?php }
+                            } else { ?>
+                                <tr>
+                                    <td colspan="2">No expenses found for this month.</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-            <h4>Expenses for <?php echo date('F Y', strtotime($month2)); ?></h4>
-            <h5>Total Amount: <?php echo $total_amount_month2; ?></h5>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Total Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($expenses_month2->num_rows > 0) {
-                        while ($expense = $expenses_month2->fetch_assoc()) { ?>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4>Expenses for <?php echo date('F Y', strtotime($month2)); ?></h4>
+                    <h5>Total Amount: ₹<?php echo number_format($total_amount_month2, 2); ?></h5>
+                    <table class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td><?php echo $expense['item_name']; ?></td>
-                                <td><?php echo $expense['total_amount']; ?></td>
+                                <th>Item</th>
+                                <th>Total Amount</th>
                             </tr>
-                        <?php }
-                    } else { ?>
-                        <tr>
-                            <td colspan="2">No expenses found for this month.</td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            <?php if ($expenses_month2->num_rows > 0) {
+                                while ($expense = $expenses_month2->fetch_assoc()) { ?>
+                                    <tr>
+                                        <td><?php echo $expense['item_name']; ?></td>
+                                        <td>₹<?php echo number_format($expense['total_amount'], 2); ?></td>
+                                    </tr>
+                                <?php }
+                            } else { ?>
+                                <tr>
+                                    <td colspan="2">No expenses found for this month.</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <!-- Chart Section -->
-            <h4>Expenses Comparison Chart</h4>
+            <h4 class="mb-3">Expenses Comparison Chart</h4>
             <canvas id="expensesChart" width="400" height="200"></canvas>
             <script>
                 const ctx = document.getElementById('expensesChart').getContext('2d');
