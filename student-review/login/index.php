@@ -10,50 +10,82 @@ if (isset($_SESSION["sr_user_id"])) {
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Page</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <style>
     body {
-      background-color: #f8f9fa;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #fff;
     }
 
     .login-card {
       width: 100%;
-      /* Make the card width responsive */
-      max-width: 1200px;
-      /* Set the maximum width for large screens */
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
     }
 
-    .logo-section {
-      background-color: #0d6efd;
-      color: #fff;
-      padding: 40px;
+    .login-header {
+      background-color: #2575fc;
+      padding: 20px;
       text-align: center;
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
+      color: #fff;
     }
 
-    .form-section {
+    .login-header h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .login-body {
       padding: 30px;
+    }
+
+    .form-label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-control {
+      border-radius: 10px;
     }
 
     .form-control:focus {
       box-shadow: none;
-      border-color: #0d6efd;
+      border-color: #2575fc;
     }
 
-    .login-btn {
-      width: 100%;
+    .btn-primary {
+      background: #2575fc;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .btn-primary:hover {
+      background: #6a11cb;
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: right;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #2575fc;
+      text-decoration: none;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -61,30 +93,27 @@ if (isset($_SESSION["sr_user_id"])) {
 <body>
 
   <!-- Login Card Start -->
-  <div class="card login-card">
-    <div class="row g-0">
-      <!-- Left Column: Logo Section -->
-      <div class="col-md-6 logo-section d-flex align-items-center justify-content-center">
-        <h2>Student Stuck Off System</h2>
-        <!-- You can replace the text above with an actual logo image -->
-        <!-- Example: <img src="your-logo.png" alt="Logo" width="150"> -->
-      </div>
-      <!-- Right Column: Form Section -->
-      <div class="col-md-6 form-section py-5">
-        <form action="../api/login.php" method="post">
-          <div class="mb-3">
-            <label for="username" class="form-label">User Name</label>
-            <input type="text" class="form-control" id="name" placeholder="xyz" name="name" required>
-          </div>
-          <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Your Password" name="password" required>
-          </div>
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary login-btn">Sign In</button>
-          </div>
-        </form>
-      </div>
+  <div class="login-card">
+    <!-- Header Section -->
+    <div class="login-header">
+      <h2>Student Stuck Off System</h2>
+    </div>
+    <!-- Form Section -->
+    <div class="login-body">
+      <form action="../api/login.php" method="post">
+        <div class="mb-3">
+          <label for="username" class="form-label">User Name</label>
+          <input type="text" class="form-control" id="name" placeholder="Enter your username" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Enter your password" name="password" required>
+        </div>
+        <a href="#" class="forgot-password">Forgot Password?</a>
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-primary">Sign In</button>
+        </div>
+      </form>
     </div>
   </div>
   <!-- Login Card End -->
